@@ -1,33 +1,42 @@
-Astral by HTML5 UP
-html5up.net | @ajlkn
-Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+# ~*~ ZINFIRIK PLAYFUL EXPERIENCES ~*~
 
+Welcome to the digital hub of **Zinfirik**. We are a playful experience studio crafting event-based, location-based interactive installations.
 
-First of its kind on H5U! Astral features a flat, minimalistic design, a fully animated
-interface (with noscript fallbacks), and styling for all basic page elements (including
-blockquotes, tables and lists). Enjoy!
+## 🚧 Status: Under Construction
+We are currently setting up our workshop, experimenting with paper, sensors, and imagination to build physical play spaces for festivals and events.
 
-Demo images* courtesy of Unsplash, a radtastic collection of CC0 (public domain) images
-you can use for pretty much whatever.
+## 🛠 Tech Stack
+- **Style:** Retro GeoCities/MySpace era aesthetic.
+- **Languages:** Pure HTML5 & CSS3.
+- **Hosting:** GitHub Pages.
+- **Layout:** Classic HTML Table-based design (Mobile Responsive).
 
-(* = Not included)
+## 👥 The Team
+- **Didar**
+- **Nihan**
+- **Burcu**
 
-Feedback, bug reports, and comments are not only welcome, but strongly encouraged :)
+## 📬 Contact
+Feel free to reach out for collaborations or just to say hi!
+- **Email:** [zinfirikstudio@gmail.com](mailto:zinfirikstudio@gmail.com)
+- **Instagram:** [@zinfirik](https://instagram.com/zinfirik)
 
-AJ
-aj@lkn.io | @ajlkn
+---
 
-PS: Not sure how to get that contact form working? Give formspree.io a try (it's awesome).
+## 📜 Credits & Licensing
 
+### Fonts
+This project uses custom web fonts. According to the licensing terms:
 
-Credits:
+*   **Online Web Fonts:** 
+    <div>Fonts made from <a href="http://www.onlinewebfonts.com">Web Fonts</a> is licensed by CC BY 4.0</div>
 
-	Demo Images:
-		Unsplash (unsplash.com)
+*   **Aka-Acid Fonts:**
+    <a href="http://www.onlinewebfonts.com">Web Fonts</a> and the other font Fonts by www.aka-acid.com
+    Copyright Unibrain S.A., January 1993, Version 3. Aka-AcidGRPathetic WebFont
 
-	Icons:
-		Font Awesome (fontawesome.io)
+### Assets
+- **Illustrations:** Canva.
 
-	Other:
-		jQuery (jquery.com)
-		Responsive Tools (github.com/ajlkn/responsive-tools)
+---
+*Step away from the keyboard and come play outside!*
