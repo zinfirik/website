@@ -3,80 +3,259 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>~*~ Zinfirik Gizli Geçit ~*~</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Enstitü Saha Araştırması - Giriş Terminali</title>
     <style>
-        .secret-box {
-            background: #ffffff;
-            border: 3px dashed var(--main-blue);
+        @font-face {
+            font-family: 'MarvinRound';
+            src: url('../fonts/Marvin-Round.ttf') format('truetype');
+        }
+        @font-face {
+            font-family: 'ProvidenceSans';
+            src: url('../fonts/ProvidenceSansOffcW00Bold.ttf') format('truetype');
+        }
+        @font-face {
+            font-family: 'Aka-AcidGRPathetic';
+            src: url('../fonts/Aka-AcidGRPathetic.ttf.woff') format('woff');
+        }
+
+        :root {
+            --terminal-green: #39ff14;
+            --terminal-bg: #090d16;
+            --terminal-blue: #00b0ff;
+            --main-blue: #1581bf;
+            --glow-color: rgba(57, 255, 20, 0.4);
+        }
+
+        body {
+            background-color: var(--terminal-bg);
+            background-image: 
+                linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
+                linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 4px, 6px 100%;
+            color: var(--terminal-green);
+            font-family: 'Consolas', 'Courier New', Courier, monospace;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        /* Scanline CRT animation */
+        body::before {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 2;
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+        }
+
+        .terminal-container {
+            width: 100%;
+            max-width: 600px;
+            background: rgba(13, 20, 35, 0.9);
+            border: 2px solid var(--terminal-green);
+            box-shadow: 0 0 20px var(--glow-color);
+            border-radius: 10px;
             padding: 30px;
-            margin: 20px auto;
-            border-radius: 15px;
-            max-width: 400px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .terminal-header {
+            text-align: center;
+            border-bottom: 2px solid var(--terminal-green);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .terminal-logo {
+            max-width: 80px;
+            height: auto;
+            margin-bottom: 15px;
+            filter: drop-shadow(0px 0px 8px var(--glow-color)) invert(1) hue-rotate(90deg);
+            opacity: 0.8;
+            animation: pulse 4s infinite ease-in-out;
+        }
+
+        .enstitu-title {
+            font-family: 'MarvinRound', sans-serif;
+            font-size: 1.3rem;
+            letter-spacing: 1.5px;
+            margin-bottom: 5px;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        .status-line {
+            font-size: 0.85rem;
+            color: var(--terminal-blue);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 10px;
+        }
+
+        .status-blink {
+            animation: blink 1.2s infinite steps(2, start);
+            font-weight: bold;
+        }
+
+        .form-box {
             text-align: center;
         }
+
+        label {
+            font-size: 1rem;
+            display: block;
+            margin-bottom: 15px;
+            letter-spacing: 1.5px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            max-width: 320px;
+            margin: 0 auto 20px auto;
+        }
+
+        .input-wrapper::before {
+            content: "> ";
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--terminal-green);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
         input[type="text"] {
             width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 2px solid var(--main-blue);
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid var(--terminal-green);
+            padding: 12px 12px 12px 35px;
+            color: var(--terminal-green);
             font-family: inherit;
-            font-size: 1.1em;
-            text-align: center;
+            font-size: 1.2rem;
+            text-align: left;
             box-sizing: border-box;
+            border-radius: 5px;
+            outline: none;
+            letter-spacing: 1px;
+            text-shadow: 0 0 5px var(--glow-color);
+            transition: all 0.3s ease;
         }
-        .retro-btn {
-            background: var(--main-blue);
-            color: white;
-            border: 2px solid var(--main-blue);
-            padding: 10px 20px;
+
+        input[type="text"]:focus {
+            box-shadow: 0 0 12px var(--glow-color);
+            border-color: #fff;
+        }
+
+        .terminal-btn {
+            background: transparent;
+            color: var(--terminal-green);
+            border: 2px solid var(--terminal-green);
+            padding: 12px 30px;
             font-family: inherit;
+            font-size: 1.1rem;
             font-weight: bold;
+            border-radius: 5px;
             cursor: pointer;
             text-transform: uppercase;
-            width: 100%;
+            letter-spacing: 1.5px;
+            transition: all 0.2s ease-in-out;
+            text-shadow: 0 0 5px var(--glow-color);
+            box-shadow: 0 0 5px var(--glow-color);
         }
-        .retro-btn:hover {
-            background: #FF4500;
-            border-color: #FF4500;
+
+        .terminal-btn:hover {
+            background: var(--terminal-green);
+            color: var(--terminal-bg);
+            box-shadow: 0 0 20px var(--terminal-green);
+            text-shadow: none;
         }
+
         .error-message {
-            color: #FF4500;
+            color: #ff3366;
             font-weight: bold;
-            margin-top: 10px;
+            margin-top: 20px;
             display: none;
+            text-shadow: 0 0 10px rgba(255, 51, 102, 0.6);
+            border: 1px dashed #ff3366;
+            padding: 10px;
+            border-radius: 5px;
+            background: rgba(255, 51, 102, 0.05);
+            animation: error-blink 0.5s infinite alternate;
+        }
+
+        .return-link {
+            display: inline-block;
+            margin-top: 30px;
+            color: var(--terminal-blue);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+
+        .return-link:hover {
+            color: #fff;
+            text-shadow: 0 0 8px var(--terminal-blue);
+        }
+
+        /* Animations */
+        @keyframes blink {
+            to { visibility: hidden; }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.7; transform: scale(1); }
+            50% { opacity: 0.9; transform: scale(1.03); }
+        }
+
+        @keyframes error-blink {
+            from { border-color: #ff3366; }
+            to { border-color: transparent; }
+        }
+
+        /* Screen shake for invalid attempts */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-6px); }
+            20%, 40%, 60%, 80% { transform: translateX(6px); }
+        }
+
+        .shake {
+            animation: shake 0.4s ease-in-out;
         }
     </style>
 </head>
 <body>
 
-<div class="wrapper">
-    <div class="header">
-        <div class="header-content">
-            <div class="header-title-container">
-                <h1 style="font-size: clamp(1.4em, 5vw, 3em);">~*~ GİZLİ GEÇİT ~*~</h1>
-            </div>
-            <p><small>Devam etmek için bulduğun şifreyi girmen gerekiyor.</small></p>
-        </div>
+<div class="terminal-container" id="terminalContainer">
+    <div class="terminal-header">
+        <!-- Zinfirik emblem as a technical watermark -->
+        <img src="../images/zinfirik_logo_outline.svg" class="terminal-logo" alt="Enstitü Logo">
+        <div class="enstitu-title">BAĞIMSIZ KÜLTÜR ARAŞTIRMALARI ENSTİTÜSÜ</div>
+        <div style="font-size: 0.85rem; opacity: 0.7; letter-spacing: 1px;">[ VERİ GİRİŞ PORTAL ]</div>
+        <div class="status-line">Bağlantı: GÜVENLİ | Durum: Yetki Bekleniyor<span class="status-blink">_</span></div>
     </div>
 
-    <div class="main-container">
-        <div class="content" style="display: block; width: 100%; text-align: center;">
-            
-            <div class="secret-box">
-                <form id="gatekeeperForm">
-                    <label for="passwordInput"><strong>ANAHTAR KELİME:</strong></label>
-                    <br><br>
-                    <!-- text input instead of password so they can see their funny festival codes clearly -->
-                    <input type="text" id="passwordInput" placeholder="Şifreyi buraya yaz..." autocomplete="off">
-                    <br>
-                    <button type="submit" class="retro-btn">✨ KAPIYI AÇ ✨</button>
-                </form>
-                <div id="errorTxt" class="error-message">❌ Yanlış anahtar! Etrafa daha dikkatli bak...</div>
+    <div class="form-box">
+        <form id="gatekeeperForm">
+            <label for="passwordInput">SAHA ARAŞTIRMASI İÇİN ANAHTAR KELİME:</label>
+            <div class="input-wrapper">
+                <input type="text" id="passwordInput" placeholder="Anahtarı buraya gir..." autocomplete="off" autofocus>
             </div>
+            <button type="submit" class="terminal-btn">KİLİDİ AÇ ✦</button>
+        </form>
+        <div id="errorTxt" class="error-message">❌ [ERİŞİM REDDEDİLDİ: GEÇERSİZ ANAHTAR] - ÇEVREYİ BİRAZ DAHA ARAŞTIR...</div>
 
-            <p style="margin-top: 20px;"><a href="index.html">← Ana Sayfaya Dön</a></p>
-        </div>
+        <p><a href="../index.html" class="return-link">← [ Ana Sayfaya Dön ]</a></p>
     </div>
 </div>
 
@@ -86,21 +265,25 @@
         
         const userInput = document.getElementById('passwordInput').value.trim().toLowerCase();
         const errorTxt = document.getElementById('errorTxt');
+        const container = document.getElementById('terminalContainer');
         
-        // 🔑 SET YOUR PASSWORD HERE (Keep it lowercase)
+        // 🔑 SANAT password as required
         const secretPassword = "sanat"; 
 
         if (userInput === secretPassword) {
             errorTxt.style.display = 'none';
-            // Pushes them directly into your new game folder!
-            window.location.href = "https://www.zinfirik.com/rapor-09/";
+            // Pushes them directly into the twine game
+            window.location.href = "../rapor-09/";
         } else {
             errorTxt.style.display = 'block';
-            // Little screen shake effect for wrong passwords
-            document.querySelector('.secret-box').style.animation = 'none';
-            setTimeout(() => {
-                alert("Girdiğin şifre kilitleri açmadı!");
-            }, 10);
+            
+            // Trigger CRT terminal shake
+            container.classList.remove('shake');
+            void container.offsetWidth; // trigger reflow
+            container.classList.add('shake');
+            
+            // Clean input
+            document.getElementById('passwordInput').value = '';
         }
     });
 </script>
