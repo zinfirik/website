@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>~*~ Zinfirik Anket ~*~</title>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        /* --- ANKET FORM STİLLERİ --- */
+        .anket-form {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .form-group label,
+        .question-block > .question-label {
+            font-family: var(--title-font);
+            font-size: 1.05rem;
+            color: var(--main-blue);
+        }
+
+        .anket-form input[type="text"],
+        .anket-form textarea {
+            font-family: var(--body-font);
+            font-size: 1rem;
+            color: var(--main-blue);
+            background: var(--bg-white);
+            border: 2px solid var(--main-blue);
+            border-radius: 10px;
+            padding: 10px 14px;
+            box-sizing: border-box;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .anket-form textarea {
+            resize: vertical;
+            min-height: 90px;
+            font-family: inherit;
+        }
+
+        .anket-form input[type="text"]:focus,
+        .anket-form textarea:focus {
+            outline: none;
+            border-color: var(--accent-orange);
+            box-shadow: 0 0 0 3px rgba(255, 90, 54, 0.2);
+        }
+
+        .question-block {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            border: 2px dashed rgba(21, 129, 191, 0.4);
+            border-radius: 12px;
+            padding: 18px;
+            background: var(--bg-white);
+        }
+
+        .options-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .option-pill {
+            position: relative;
+        }
+
+        .option-pill input[type="radio"],
+        .option-pill input[type="checkbox"] {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .option-pill label {
+            display: inline-block;
+            cursor: pointer;
+            padding: 8px 16px;
+            border: 2px solid var(--main-blue);
+            border-radius: 8px;
+            font-family: var(--body-font);
+            font-size: 0.9rem;
+            color: var(--main-blue);
+            background: var(--bg-white);
+            transition: all 0.2s ease-in-out;
+        }
+
+        .option-pill label:hover {
+            border-color: var(--accent-orange);
+            color: var(--accent-orange);
+        }
+
+        .option-pill input:checked + label {
+            background: var(--main-blue);
+            color: var(--bg-white) !important;
+            border-color: var(--main-blue);
+        }
+
+        /* Türkçe karakterler (İ, I, ı, Ğ, Ü, Ş...) text-transform: uppercase ile
+           hatalı dönüştüğü için başlıkları zaten büyük harfli yazıyoruz. */
+        .section-title,
+        .hero-announcement h2 {
+            text-transform: none;
+        }
+
+        .question-context {
+            font-size: 1rem;
+            font-weight: bold;
+            font-style: italic;
+            color: #444;
+            border-left: 3px solid var(--accent-yellow);
+            padding-left: 10px;
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        .scale-row {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .scale-side-label {
+            font-size: 0.85rem;
+            color: #444;
+            flex: 1 1 110px;
+        }
+
+        .scale-side-label.scale-right {
+            text-align: right;
+        }
+
+        .scale-options {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .scale-options .option-pill label {
+            padding: 8px 14px;
+        }
+
+        /* --- ÇOK SAYFALI ANKET --- */
+        .survey-page {
+            display: none;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .survey-page.active {
+            display: flex;
+        }
+
+        .survey-page-intro {
+            font-size: 0.95rem;
+            color: #444;
+            margin: -5px 0 0 0;
+        }
+
+        .survey-progress {
+            font-family: var(--funky-font);
+            font-size: 0.85rem;
+            color: var(--main-blue);
+            text-align: center;
+        }
+
+        .survey-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .anket-submit-btn,
+        .anket-next-btn,
+        .anket-back-btn {
+            font-family: var(--title-font);
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .anket-back-btn {
+            background: var(--bg-white);
+            color: var(--main-blue) !important;
+        }
+
+        .anket-back-btn:hover {
+            background: #f0faff;
+        }
+
+        .nav-spacer {
+            flex-grow: 1;
+        }
+
+        .anket-message {
+            display: none;
+            padding: 15px 20px;
+            border-radius: 10px;
+            border: 2px solid var(--main-blue);
+            text-align: center;
+            font-family: var(--title-font);
+        }
+
+        .anket-message.success {
+            display: block;
+            background: #e1f5fe;
+            color: var(--main-blue);
+        }
+
+        .anket-message.error {
+            display: block;
+            background: #ffe1e1;
+            color: var(--accent-orange);
+            border-color: var(--accent-orange);
+        }
+    </style>
+</head>
+<body>
+
+<div class="wrapper">
+    <!-- Header with SVG brand logo -->
+    <div class="header">
+        <div class="header-content">
+            <a href="../index.html">
+                <img src="../images/zinfirik_logo_normal.svg" class="header-logo" alt="Zinfirik Logo">
+            </a>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <!-- Content Area -->
+        <div class="content">
+            <!-- Hero Section -->
+            <div class="hero-announcement">
+                <h2>ANALOGDAN DİJİTALE - MİNİ ANKET</h2>
+            </div>
+
+            <!-- Survey Section -->
+            <div class="section" id="anket">
+                <form id="anketForm" class="anket-form">
+                    <div id="pages-container"></div>
+
+                    <div class="survey-progress" id="surveyProgress"></div>
+
+                    <div class="survey-nav">
+                        <button type="button" class="game-btn anket-back-btn" id="backBtn">← Geri</button>
+                        <div class="nav-spacer"></div>
+                        <button type="button" class="game-btn anket-next-btn" id="nextBtn">İleri →</button>
+                        <button type="submit" class="game-btn anket-submit-btn" id="submitBtn">Gönder ✦</button>
+                    </div>
+
+                    <div id="anketMessage" class="anket-message"></div>
+                </form>
+            </div>
+
+            <!-- Footer with Outline Logo Stamp -->
+            <div style="clear: both; text-align: center; padding-top: 20px; display: flex; flex-direction: column; align-items: center;">
+                <img src="../images/zinfirik_logo_outline.svg" class="footer-stamp" alt="Zinfirik Outline Logo">
+                <p><small>© 2026 Zinfirik Studio</small></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyAt6uXcoRWV3DepxtisX0TJ02fszmuI8o0",
+        authDomain: "zinfirik-web.firebaseapp.com",
+        projectId: "zinfirik-web",
+        storageBucket: "zinfirik-web.firebasestorage.app",
+        messagingSenderId: "345182346778",
+        appId: "1:345182346778:web:fdffd5d72f4e5a6cd6fba3"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // --- ANKET SAYFALARI ---
+    // Yeni sayfa eklemek/çıkarmak için bu listeyi düzenleyin.
+    // Soru tipleri:
+    //   "short_text"  - tek satır metin girişi (inputType: "text" | "number")
+    //   "long_text"   - çok satırlı metin alanı (açık uçlu)
+    //   "choice"      - tek seçim (radyo butonları)
+    //   "multi_choice"- çoklu seçim (onay kutuları)
+    //   "scale"       - 1..max arası ölçek (sol/sağ uç etiketleriyle)
+    // "context": soru üstünde gösterilen küçük bilgi notu (opsiyonel)
+    const pages = [
+        {
+            title: "BÖLÜM 1 — ıSıNMA TURU",
+            intro: "Doğru cevap yok; merak ediyoruz, hepsi bu. 18 soru, ~5 dakika.",
+            questions: [
+                {
+                    id: "anketAge",
+                    type: "choice",
+                    label: "Yaş aralığın",
+                    required: true,
+                    options: ["18 altı", "18–24", "25–34", "35–44", "45–54", "55 ve üzeri"]
+                },
+                {
+                    id: "q01_kimsin",
+                    type: "choice",
+                    label: "Kendini en çok hangisinde buluyorsun? (tek seçim)",
+                    options: [
+                        "Kâğıt, kalem, mürekkep — analog benim evim",
+                        "Tablet, ekran, layer — dijital yerliyim",
+                        "İkisini karıştırırım, melezim",
+                        "Üretmem ama izlemeye/koleksiyona bayılırım"
+                    ]
+                },
+                {
+                    id: "q02_analog_kelime",
+                    type: "short_text",
+                    label: "\"Analog\" dediğimizde aklına gelen İLK şey?"
+                },
+                {
+                    id: "q03_ai_sanat_kelime",
+                    type: "short_text",
+                    label: "\"Yapay zekâ + sanat\" dediğimizde aklına gelen İLK şey?"
+                },
+                {
+                    id: "q04_emek_fikir",
+                    type: "scale",
+                    label: "Bir işin \"ruhu\" senin için daha çok neyle ilgili? (1-5 arası işaretle)",
+                    leftLabel: "El emeği / süreç",
+                    rightLabel: "Fikir / sonuç",
+                    max: 5
+                }
+            ]
+        },
+        {
+            title: "BÖLÜM 2 — ANALOĞUN İNADı?",
+            intro: "Küçük not: 2025'te plak satışları ABD'de 1983'ten beri ilk kez 1 milyar doları aştı, film fotoğrafçılığı da geri döndü. Dijital her şeyi kolaylaştırırken bir kısmımız neden hâlâ zora kaçıyor?",
+            questions: [
+                {
+                    id: "q05_analog_cekim",
+                    type: "multi_choice",
+                    label: "Analog bir şey (defter, film, plak, linol baskı...) seni çekiyorsa sebebi ne? (birden fazla seçebilirsin)",
+                    options: [
+                        "Dokunması, fiziksel olması",
+                        "Kusurları, öngörülemezliği",
+                        "Seni yavaşlatması, \"an\"da tutması",
+                        "Nostalji",
+                        "Ekrandan kaçış / dijital yorgunluk",
+                        "Sahiplik hissi (gerçekten benim)",
+                        "Çekmiyor açıkçası, dijital bana yetiyor"
+                    ]
+                },
+                {
+                    id: "q06_deger",
+                    type: "choice",
+                    label: "Bir çizer aynı kareyi hem elle suluboyayla hem de dijitalde kusursuzca yapabiliyor. Hangisi sence \"daha değerli\"? (tek seçim)",
+                    options: [
+                        "Elle yapılan — geri dönüşü olmayan emek ve risk var",
+                        "Fark etmez — önemli olan sonuç",
+                        "Dijital — aslında daha çok kontrol ve beceri ister",
+                        "\"Değer\" burada yanlış soru"
+                    ]
+                },
+                {
+                    id: "q07_kusur",
+                    type: "choice",
+                    label: "\"Kusur\" senin için neyin işareti? (tek seçim)",
+                    options: [
+                        "İnsanın, canlılığın",
+                        "Acemiliğin",
+                        "Karakterin, imzanın",
+                        "Önemsiz bir detay"
+                    ]
+                }
+            ]
+        },
+        {
+            title: "BÖLÜM 3 — İKİSİ BİR ARADA",
+            questions: [
+                {
+                    id: "q08_elle_yapilmis",
+                    type: "multi_choice",
+                    label: "Aşağıdakilerden hangileri sence hâlâ \"elle yapılmış / analog\" sayılır? (birden fazla seçebilirsin)",
+                    options: [
+                        "Kâğıda çizip tarayıp dijitalde boyamak",
+                        "iPad'de Procreate ile çizmek",
+                        "Linol / serigrafi baskı almak",
+                        "Fotoğrafı çekip Lightroom'da işlemek",
+                        "3B modelleyip elle rötuşlamak",
+                        "Hiçbiri net değil, çizgi gerçekten bulanık"
+                    ]
+                },
+                {
+                    id: "q09_hibrit",
+                    type: "choice",
+                    label: "Bir çizer eskizini kâğıtta yapıyor; mürekkep ve rengi tamamen dijitalde bitiriyor. Bu iş sence... (tek seçim)",
+                    options: [
+                        "Hibrit — ikisinden de beslenmiş",
+                        "Aslında dijital bir iş",
+                        "Hâlâ \"elle çizilmiş\" sayılır",
+                        "Etiket gereksiz, iş iştir"
+                    ]
+                },
+                {
+                    id: "q10_sinir",
+                    type: "choice",
+                    label: "Bir araç (tablet, filtre, AI) ne zaman \"kopya çekmek\", ne zaman \"araç kullanmak\" olur? Sınır sence... (tek seçim)",
+                    options: [
+                        "Aracın işin ne kadarını yaptığında",
+                        "Niyette — dürüstçe söylenip söylenmediğinde",
+                        "\"Sonucu sen mi yönettin\" meselesinde",
+                        "Böyle bir sınır yok"
+                    ]
+                }
+            ]
+        },
+        {
+            title: "BÖLÜM 4 — YAPAY ZEKÂ MASAYA OTURDU",
+            questions: [
+                {
+                    id: "q11_christies",
+                    type: "choice",
+                    context: "2025'te Christie's ilk \"tamamen AI sanatı\" müzayedesini düzenledi. Sanatçılar iptal için imza topladı, ama satış yine de rekor kırdı.",
+                    label: "Sen olsan... (tek seçim)",
+                    options: [
+                        "İmza atardım — bu hırsızlık",
+                        "İzler, merak ederdim",
+                        "Alıcı bile olabilirdim — bu da bir sanat",
+                        "Hiç umursamazdım"
+                    ]
+                },
+                {
+                    id: "q12_ai_sanatci",
+                    type: "choice",
+                    label: "AI ile üretilen bir görselin \"sanatçısı\" kim? (tek seçim)",
+                    options: [
+                        "Prompt'u yazan kişi",
+                        "Hiç kimse — sahibi yok",
+                        "Modeli besleyen verideki tüm sanatçılar",
+                        "Yazılımı yapan şirket",
+                        "Bu sanat değil, soru anlamsız"
+                    ]
+                },
+                {
+                    id: "q13_ghibli",
+                    type: "multi_choice",
+                    context: "Geçen yıl milyonlarca kişi fotoğrafını saniyeler içinde \"Ghibli tarzında\" AI'ya çizdirdi. (Miyazaki bir zamanlar AI animasyonu için \"yaşamın kendisine hakaret\" demişti.)",
+                    label: "Sence bu neydi? (birden fazla seçebilirsin)",
+                    options: [
+                        "Eğlenceli, zararsız bir akım",
+                        "Bir stüdyonun yıllarca emeğinin sömürülmesi",
+                        "Sanatın \"demokratikleşmesi\"",
+                        "Telif ve rıza ihlali",
+                        "Sadece geçip gidecek bir moda"
+                    ]
+                },
+                {
+                    id: "q14_reklam",
+                    type: "choice",
+                    label: "Bir markanın reklamını insan illüstratör yerine AI ile yapması sence... (tek seçim)",
+                    options: [
+                        "Sorun yok, sonuçta maliyet meselesi",
+                        "Sektörü ve sanatçıları yıpratıyor, rahatsızım",
+                        "Duruma göre değişir",
+                        "Görsem boykot ederim"
+                    ]
+                }
+            ]
+        },
+        {
+            title: "BÖLÜM 5 — ETİK İKİLEMLER",
+            questions: [
+                {
+                    id: "q15_oncelik",
+                    type: "choice",
+                    context: "Bir sanatçı 100+ saat emek verdiği işini paylaşıyor; yorumlar \"bu AI\" suçlamalarıyla doluyor, üstüne bir \"AI dedektörü\" de onu yanlışlıkla işaretliyor.",
+                    label: "Sence öncelik ne olmalı? (tek seçim)",
+                    options: [
+                        "Sanatçıya masumiyet karinesi — iddia eden ispatlasın",
+                        "Şeffaflık — herkes süreç/eskiz paylaşmaya açık olsun",
+                        "Dedektörlere kanıt muamelesi yapmayı bırakmak",
+                        "Suçlama kültürü, AI'ın kendisinden daha zararlı"
+                    ]
+                },
+                {
+                    id: "q16_ihlal",
+                    type: "multi_choice",
+                    label: "Bir AI modelinin sanatçıların izinsiz işleriyle eğitilmesi sence neyi ihlal eder? (birden fazla seçebilirsin)",
+                    options: [
+                        "Telif hakkını",
+                        "Rızayı",
+                        "Adil ücreti / geçim hakkını",
+                        "Hiçbirini — internetteki her şey ortak malzemedir",
+                        "Bir \"stil\" zaten kimseye ait olamaz diye düşünüyorum"
+                    ]
+                },
+                {
+                    id: "q17_taklit",
+                    type: "choice",
+                    label: "Bir sanatçının tarzı başkası (insan ya da AI) tarafından taklit edilebilir. Bu... (tek seçim)",
+                    options: [
+                        "Hırsızlık — tarz bir imzadır",
+                        "Sanatın doğası — herkes birinden öğrenir",
+                        "İnsansa öğrenme, AI ise hırsızlık",
+                        "Bağlama göre değişir"
+                    ]
+                },
+                {
+                    id: "q18_son_cumle",
+                    type: "long_text",
+                    label: "Festivalden çıkarken \"analogdan dijitale\" bu yolculukla ilgili tek cümle bırakman gerekse — bir his, fikir ya da öngörü — ne yazardın? (açık uçlu)"
+                }
+            ]
+        }
+    ];
+
+    const pagesContainer = document.getElementById("pages-container");
+
+    // Tüm soruları düz bir liste olarak topla (cevapları toplarken kullanılacak)
+    const allQuestions = pages.flatMap((page) => page.questions);
+
+    pages.forEach((page, pageIndex) => {
+        const pageEl = document.createElement("div");
+        pageEl.className = "survey-page";
+        if (pageIndex === 0) pageEl.classList.add("active");
+
+        const title = document.createElement("h3");
+        title.className = "section-title";
+        title.textContent = page.title;
+        pageEl.appendChild(title);
+
+        if (page.intro) {
+            const intro = document.createElement("p");
+            intro.className = "survey-page-intro";
+            intro.textContent = page.intro;
+            pageEl.appendChild(intro);
+        }
+
+        page.questions.forEach((q) => {
+            if (q.type === "short_text") {
+                const group = document.createElement("div");
+                group.className = "form-group";
+
+                const label = document.createElement("label");
+                label.setAttribute("for", q.id);
+                label.textContent = q.label;
+
+                const input = document.createElement("input");
+                input.type = q.inputType === "number" ? "number" : "text";
+                input.id = q.id;
+                input.name = q.id;
+                if (q.required) input.required = true;
+
+                group.appendChild(label);
+                group.appendChild(input);
+                pageEl.appendChild(group);
+                return;
+            }
+
+            const block = document.createElement("div");
+            block.className = "question-block";
+
+            if (q.context) {
+                const context = document.createElement("p");
+                context.className = "question-context";
+                context.textContent = q.context;
+                block.appendChild(context);
+            }
+
+            const label = document.createElement("p");
+            label.className = "question-label";
+            label.textContent = q.label;
+            block.appendChild(label);
+
+            if (q.type === "choice" || q.type === "multi_choice") {
+                const optionsGrid = document.createElement("div");
+                optionsGrid.className = "options-grid";
+
+                q.options.forEach((option, index) => {
+                    const pill = document.createElement("div");
+                    pill.className = "option-pill";
+
+                    const inputId = `${q.id}_${index}`;
+
+                    const input = document.createElement("input");
+                    input.type = q.type === "multi_choice" ? "checkbox" : "radio";
+                    input.name = q.id;
+                    input.id = inputId;
+                    input.value = option;
+                    if (q.required && q.type === "choice") input.required = true;
+
+                    const optLabel = document.createElement("label");
+                    optLabel.setAttribute("for", inputId);
+                    optLabel.textContent = option;
+
+                    pill.appendChild(input);
+                    pill.appendChild(optLabel);
+                    optionsGrid.appendChild(pill);
+                });
+
+                block.appendChild(optionsGrid);
+            } else if (q.type === "long_text") {
+                const textarea = document.createElement("textarea");
+                textarea.name = q.id;
+                textarea.id = q.id;
+                if (q.required) textarea.required = true;
+                block.appendChild(textarea);
+            } else if (q.type === "scale") {
+                const scaleRow = document.createElement("div");
+                scaleRow.className = "scale-row";
+
+                const leftLabel = document.createElement("span");
+                leftLabel.className = "scale-side-label";
+                leftLabel.textContent = q.leftLabel;
+
+                const optionsGrid = document.createElement("div");
+                optionsGrid.className = "options-grid scale-options";
+
+                for (let value = 1; value <= q.max; value++) {
+                    const pill = document.createElement("div");
+                    pill.className = "option-pill";
+
+                    const inputId = `${q.id}_${value}`;
+
+                    const input = document.createElement("input");
+                    input.type = "radio";
+                    input.name = q.id;
+                    input.id = inputId;
+                    input.value = String(value);
+                    if (q.required) input.required = true;
+
+                    const optLabel = document.createElement("label");
+                    optLabel.setAttribute("for", inputId);
+                    optLabel.textContent = String(value);
+
+                    pill.appendChild(input);
+                    pill.appendChild(optLabel);
+                    optionsGrid.appendChild(pill);
+                }
+
+                const rightLabel = document.createElement("span");
+                rightLabel.className = "scale-side-label scale-right";
+                rightLabel.textContent = q.rightLabel;
+
+                scaleRow.appendChild(leftLabel);
+                scaleRow.appendChild(optionsGrid);
+                scaleRow.appendChild(rightLabel);
+                block.appendChild(scaleRow);
+            }
+
+            pageEl.appendChild(block);
+        });
+
+        pagesContainer.appendChild(pageEl);
+    });
+
+    // --- SAYFA GEZİNTİSİ ---
+    const surveyPages = Array.from(document.querySelectorAll(".survey-page"));
+    const totalPages = surveyPages.length;
+    let currentPage = 0;
+
+    const backBtn = document.getElementById("backBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const submitBtn = document.getElementById("submitBtn");
+    const progressEl = document.getElementById("surveyProgress");
+
+    function updateNav() {
+        surveyPages.forEach((page, index) => {
+            page.classList.toggle("active", index === currentPage);
+        });
+
+        backBtn.style.visibility = currentPage === 0 ? "hidden" : "visible";
+
+        const isLastPage = currentPage === totalPages - 1;
+        nextBtn.style.display = isLastPage ? "none" : "inline-block";
+        submitBtn.style.display = isLastPage ? "inline-block" : "none";
+
+        progressEl.textContent = `Sayfa ${currentPage + 1} / ${totalPages}`;
+    }
+
+    function currentPageIsValid() {
+        const inputs = surveyPages[currentPage].querySelectorAll("input, textarea");
+        for (const input of inputs) {
+            if (!input.checkValidity()) {
+                input.reportValidity();
+                return false;
+            }
+        }
+        return true;
+    }
+
+    nextBtn.addEventListener("click", () => {
+        if (!currentPageIsValid()) return;
+        if (currentPage < totalPages - 1) {
+            currentPage++;
+            updateNav();
+        }
+    });
+
+    backBtn.addEventListener("click", () => {
+        if (currentPage > 0) {
+            currentPage--;
+            updateNav();
+        }
+    });
+
+    updateNav();
+
+    // --- FORM GÖNDERİMİ ---
+    const form = document.getElementById("anketForm");
+    const messageBox = document.getElementById("anketMessage");
+
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        if (!currentPageIsValid()) return;
+
+        const formData = new FormData(form);
+        const answers = {};
+        allQuestions.forEach((q) => {
+            answers[q.id] = q.type === "multi_choice" ? formData.getAll(q.id) : (formData.get(q.id) || "");
+        });
+
+        submitBtn.disabled = true;
+
+        try {
+            await addDoc(collection(db, "responses"), {
+                answers: answers,
+                createdAt: serverTimestamp()
+            });
+
+            messageBox.textContent = "Teşekkürler! Cevapların kaydedildi. ✦";
+            messageBox.className = "anket-message success";
+            form.reset();
+            currentPage = 0;
+            updateNav();
+        } catch (err) {
+            messageBox.textContent = "Bir hata oluştu, lütfen tekrar dene.";
+            messageBox.className = "anket-message error";
+            console.error(err);
+        } finally {
+            submitBtn.disabled = false;
+        }
+    });
+</script>
+
+</body>
+</html>
